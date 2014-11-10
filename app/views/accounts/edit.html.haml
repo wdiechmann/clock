@@ -1,7 +1,5 @@
-%h1 Editing account
-
 = render 'form'
+.authform
+	= link_to t(:show), @account, class: 'btn btn-primary'
 
-= link_to 'Show', @account
-\|
-= link_to 'Back', accounts_path
+	= link_to t(:back), accounts_path, class: 'btn btn-default btn-raised' if current_user.admin?

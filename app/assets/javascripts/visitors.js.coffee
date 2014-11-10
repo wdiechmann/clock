@@ -35,7 +35,8 @@ initializeSweetAlert = () ->
   			url = window.location.href + url + ddate + ' ' + dtime
   			jqhxr = $.get url
   			.done ->
-          $(elem).addClass('btn-success')
+          console.log $(elem)
+          $(elem).addClass('btn-success').removeClass('btn-warning')
           # swal
           #             title: 'Hurrahh!',
           #             text: 'Din ankomst er blevet registreret!',

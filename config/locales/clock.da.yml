@@ -23,6 +23,13 @@ da:
   
   save: "Gem"
   show: "Vis"
+  accounts:
+    accounts: "Min konto"
+    
+    forms:
+      name: "Kontonavn"
+      active: "Aktiv"
+    
   employees:
 
     titles:

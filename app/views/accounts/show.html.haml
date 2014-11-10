@@ -1,12 +1,13 @@
-%p#notice= notice
+.authform
+	%h3= @account.name
 
-%p
-  %b Name:
-  = @account.name
-%p
-  %b Active:
-  = @account.active
-
-= link_to 'Edit', edit_account_path(@account)
-\|
-= link_to 'Back', accounts_path
+	%p
+		%b Navn:
+		= @account.name
+	
+	%p
+		%b Aktiv:
+		= @account.active
+		
+	= link_to t(:edit), edit_account_path(@account), class: 'btn btn-primary'
+	= link_to t(:back), accounts_path, class: 'btn btn-default btn-raised' if current_user.admin?

@@ -21,7 +21,7 @@
 
 da:
   hello: "hej Verden"
-  home: "Basen"
+  home: "Clock"
   admin: "Administration"
   edit: "Ret"
   back: "Oversigt"

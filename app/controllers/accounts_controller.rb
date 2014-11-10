@@ -4,6 +4,7 @@ class AccountsController < ApplicationController
   # GET /accounts
   # GET /accounts.json
   def index
+    redirect_to current_user.account unless current_user.admin?
     @accounts = Account.all
   end
 
@@ -42,6 +43,7 @@ class AccountsController < ApplicationController
   def update
     respond_to do |format|
       if @account.update(account_params)
+        cookies.permanent.signed[:clock_alco_dk]=@account.name
         format.html { redirect_to @account, notice: 'Account was successfully updated.' }
         format.json { render :show, status: :ok, location: @account }
       else

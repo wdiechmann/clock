@@ -1,9 +1,49 @@
-= simple_form_for(@account) do |f|
-  = f.error_notification
+.authform
 
-  .form-inputs
-    = f.input :name
-    = f.input :active
+	%h3
+		- if @account.new_record?
+			= t('accounts.navigation.adding_an_account')
+		- else
+			= t('accounts.navigation.editing_an_account')
 
-  .form-actions
-    = f.button :submit
+	= simple_form_for(@account) do |f|
+		= f.error_notification
+		
+		.form-group
+			= f.text_field :name, :autofocus => true, class: 'form-control floating-label', placeholder: t('accounts.forms.name')
+			= f.error :name
+		
+		- if current_user.admin?
+			.form-group
+				%fieldset
+					%legend Aktiv
+					%label{ for: "account_true"}
+						%input{ type:"radio", value: "true", name: "account[active]", id: "account_active_true", checked: (@account.active ? 'true' : 'false')}
+							%span aktiv
+
+					%label{ for: "account_false"}
+						%input{ type:"radio", value: "false", name: "account[active]", id: "account_active_false", checked: (@account.active ? 'false' : 'true') }
+							%span passiv
+
+		.form-actions
+			= f.button :submit
+
+		/ an exeample of how to style radio buttons !
+		/ see the accompanying CSS in assets/stylesheets/application.css.scss
+		/
+		/ .row
+		/ 	.col-sm-12
+		/ 		%fieldset
+		/ 			%legend Radio Control Quality
+		/ 			%label{ for: "accessible"}
+		/ 				%input{ type:"radio", value: "accessible", name: "quality", id: "accessible"}
+		/ 					%span accessible
+		/
+		/ 			%label{ for: "pretty"}
+		/ 				%input{ type:"radio", value: "pretty", name: "quality", id: "pretty" }
+		/ 					%span pretty
+		/
+		/ 			%label{ for: "accessible-and-pretty"}
+		/ 				%input{ type:"radio", value: "accessible and pretty", name: "quality", id: "accessible-and-pretty" }
+		/ 					%span accessible and pretty
+

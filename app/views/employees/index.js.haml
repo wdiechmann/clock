@@ -1,7 +1,8 @@
 :css 
 	.line { border-left: 1px solid black; padding-left: 10px }
 	.employee > span { font-size: 18px }
-	.btn-success { color: white !important }
+	.btn-success, .btn-info { color: white !important }
+	.btn-success:hover, .btn-info:hover {color: black !important }
 
 %table
 	%thead
@@ -10,7 +11,7 @@
 
 	%tbody
 		- @employees.each do |employee|
-			- color = (employee.last_seen > Date.today.to_time) ? "btn-success " : ""
+			- color = (employee.last_seen && employee.last_seen > Date.today.to_time) ? "btn-success " : "btn-warning"
 			%tr
 				%td
 					%p.employee{ id: "employee_id_time_#{employee.id}"}

@@ -1,44 +1,64 @@
 :css
 	.employee { cursor: pointer;}
 
-.container
-	.row.well
-		.col-sm-12
-			%h3 Velkommen
-			%p 
-				klokken er nu
-				%span.time
-				\- klik på dit navn for at andre kan se, at du er kommet
-	- unless current_user.nil?
-		#punch_clocks.row.well
-			.col-sm-12
-				%p
-					Hvis denne skærm skal fungere som 'stempelur' - vælg det stempelur som skal vises
-					%br
-					- @punch_clocks.each do	|punch_clock|
-						%button.punch_clock.btn{ id: "punch_clock_#{punch_clock.id}", class: "#{cookies.permanent.signed[:punch_clock]==punch_clock.id.to_s ? 'btn-success' : 'btn-info'}"}
-							= punch_clock.name
-	/
-	/ an exeample of how to style radio buttons ! 
-	/ see the accompanying CSS in assets/stylesheets/application.css.scss
-	/
-	/ .row
-	/ 	.col-sm-12
-	/ 		%fieldset
-	/ 			%legend Radio Control Quality
-	/ 			%label{ for: "accessible"}
-	/ 				%input{ type:"radio", value: "accessible", name: "quality", id: "accessible"}
-	/ 					%span accessible
-	/
-	/ 			%label{ for: "pretty"}
-	/ 				%input{ type:"radio", value: "pretty", name: "quality", id: "pretty" }
-	/ 					%span pretty
-	/
-	/ 			%label{ for: "accessible-and-pretty"}
-	/ 				%input{ type:"radio", value: "accessible and pretty", name: "quality", id: "accessible-and-pretty" }
-	/ 					%span accessible and pretty
+- unless current_user.nil?
+	- cookies.permanent.signed[:clock_alco_dk]=current_user.account.name
 
-	.row#employees
+- if cookies.permanent.signed[:clock_alco_dk].nil?
+	.jumbotron
+		.container
+			%h1 La' Clock ta' tiden!
+			%p Se hvor nemt det er.
+			%p
+				%a.btn.btn-primary.btn-lg{href:"#", role:"button"} Vis videoen »
+
+	.container
+		.row
+			.col-md-4
+				%h2 Hvornår kommer dine medarbejdere?
+				%p Clock giver dig flere muligheder for at lade medarbejderne registrere deres tid selv. Fra deres egen smartphone, over et 'stempelur' til et RFID armbånd.
+				%p 
+					%a.btn.btn-default{href:"#", role: "button"} Vis mig hvordan »
+
+			.col-md-4
+				%h2 Hvorfor kom de ikke?
+				%p Med Clock bliver det nemt at registrere fravær – i toget, på færgen, i sommerhuset. Det er altid en god idé at medarbejdere ringer deres fravær ind til deres nærmeste foresatte
+				%p 
+					%a.btn.btn-default{href:"#", role: "button"} Se hvordan »
+        
+			.col-md-4
+				%h2 Hvorlænge bliver de?
+				%p Clock forlanger ikke at dine medarbejdere "stempler ud" hvis den oplysning ikke er relevant for dig, men stempler de ud, kan du nemt danne eksempelvis timeseddelgrundlaget til din lønkørsel!
+				%p 
+					%a.btn.btn-default{href:"#", role: "button"} Se et eksempel »
+				
+		%hr
+
+		%footer
+			%p © ALCO Company 2014
+      
+
+- else
+	.container
+		.row.well
+			.col-sm-12
+				%h3 Velkommen
+				%p 
+					klokken er nu
+					%span.time
+					\- klik på dit navn for at andre kan se, at du er kommet
+		- unless current_user.nil?
+			#punch_clocks.row.well
+				.col-sm-12
+					%p
+						Hvis denne skærm skal fungere som 'stempelur' - vælg det stempelur som skal vises
+						%br
+						- @punch_clocks.each do	|punch_clock|
+							%button.punch_clock.btn{ id: "punch_clock_#{punch_clock.id}", class: "#{cookies.permanent.signed[:punch_clock]==punch_clock.id.to_s ? 'btn-success' : 'btn-info'}"}
+								= punch_clock.name
+
+
+		.row#employees
 
 :coffeescript
 	$(document).on 'ready page:load', -> 
