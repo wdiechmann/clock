@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20141029115447) do
 
   create_table "accounts", force: true do |t|
     t.string   "name"
-    t.boolean  "active"
+    t.boolean  "active",     default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
