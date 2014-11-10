@@ -1,8 +1,9 @@
 :css
 	.employee { cursor: pointer;}
 
-- unless current_user.nil?
-	- cookies.permanent.signed[:clock_alco_dk]=current_user.account.name
+- if user_signed_in?
+	- unless current_user.admin?
+		- cookies.permanent.signed[:clock_alco_dk]=current_user.account.name
 
 - if cookies.permanent.signed[:clock_alco_dk].nil?
 	.jumbotron
