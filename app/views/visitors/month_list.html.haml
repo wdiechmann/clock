@@ -1,0 +1,44 @@
+- months = %w{ dummy januar februar marts april maj juni juli august september november december}
+:css
+	@media print {
+		h1 { 
+			page-break-before: always;
+		}
+	}
+- @employee = @employees.each do |employee|
+	%h1
+
+	%table
+		%tr
+			%td{ style: "width: 200px"}
+				navn:
+				= employee.name
+			%td{ style: "width: 250px"}
+				cpr:
+			%td{ style: "width: 200px"}
+				måned:
+				= months[ @month_range.first.to_date.month]
+		
+	%h2
+
+	%table.table-bordered{ style: "width: 100%"}
+		%thead
+			%td dato
+			%td mødt
+			%td syg
+			%td fravær
+			%td ikk acc. fravær
+			%td friperiode
+		
+		%tbody
+			- list_every_day(employee, @month_range) do |nbr,day|
+				%tr
+					%td
+						= nbr
+					%td
+						= day.strftime "%H:%M" unless day.nil?
+					%td
+					%td
+					%td
+					%td
+				

@@ -11,5 +11,13 @@ module ApplicationHelper
   rescue
     "Clock"
   end
-  
+
+  def list_every_day employee, month_range, &block
+    dates = []
+    employee.entrances.map(&:clocked_at).each{ |d| dates[d.day]= d }
+    (1..month_range.last.day.to_i).each do |day|
+      yield day, dates[day]
+    end
+  end
+    
 end

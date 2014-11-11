@@ -23,7 +23,11 @@ class EmployeesController < ApplicationController
         @employees = pc.employees + Employee.where( account: pc.account, punch_clock: nil )
       end
     else
-      @employees = params[:punch_clock_id].nil? ? current_user.account.employees : PunchClock.find(params[:punch_clock_id]).employees
+      if user_signed_in? && current_user.admin?
+        @employees = Employee.all
+      else
+        @employees = params[:punch_clock_id].nil? ? current_user.account.employees : PunchClock.find(params[:punch_clock_id]).employees
+      end
     end
 
     respond_to do |format|
