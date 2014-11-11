@@ -26,6 +26,10 @@ da:
   edit: "Ret"
   back: "Oversigt"
   delete: "Slet"
+  change_your_password: "Skift adgangskode"
+  new_password: "Ny adgangskode"
+  confirm_new_password: "Gentag ny adgangskode"
+  change_my_password: "Gem ny adgangskode"
   activerecord:
     errors:
       models:
