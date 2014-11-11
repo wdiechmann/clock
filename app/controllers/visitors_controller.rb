@@ -14,9 +14,7 @@ class VisitorsController < ApplicationController
   
   
   def month_list
-    first_date = Date.today.at_beginning_of_month
-    last_date = Date.today.at_end_of_month
-    @month_range = (first_date.to_time .. last_date.to_time)
+    @month_range = Date.today.at_beginning_of_month..Date.today.at_end_of_month
     # Account.all.each do |account|
     #
     #   employees = Employee.where( account: self ).joins(:entrances).where('entrances.clocked_at' => month_range)
@@ -24,8 +22,8 @@ class VisitorsController < ApplicationController
     #
     # end
 
-    @employees = current_user.account.employees.all.joins(:entrances).where('entrances.clocked_at' => @month_range)
-    
+    @employees = current_user.account.employees.all.includes(:entrances).where( 'entrances.clocked_at' => @month_range).order('employees.id','entrances.clocked_at')
+
     respond_to do |format|
       format.html #{}
     end
