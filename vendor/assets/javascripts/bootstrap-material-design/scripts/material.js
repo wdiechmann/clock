@@ -10,6 +10,28 @@ $(function (){
                       ".withripple" );
     }
 
+
+    var empty = function(fld) {
+      try {
+        data = $(fld).val();
+      } catch(exception){
+        return true;
+      }
+
+      if(typeof(data) == 'number' || typeof(data) == 'boolean') { return false }
+      if(typeof(data) == 'undefined' || data === null) { return true }
+      if(typeof(data.length) != 'undefined') { return data.length == 0 }
+      var count = 0;
+      for(var i in data)
+      {
+        if(data.hasOwnProperty(i))
+        {
+          count ++;
+        }
+      }
+      return count == 0;
+    }
+
     var initInputs = function() {
         // Add fake-checkbox to material checkboxes
         $(".checkbox > label > input").not(".bs-material").addClass("bs-material").after("<span class=check></span>");
@@ -27,9 +49,14 @@ $(function (){
                 $(this).attr("placeholder", null).removeClass("floating-label");
                 $(this).after("<div class=floating-label>" + placeholder + "</div>");
             }
-            if ($(this).is(":empty") || $(this).val() === null || $(this).val() == "undefined" || $(this).val() === "") {
-                $(this).addClass("empty");
+
+            if ( empty(this) && !$(this).hasClass('date')) {
+              $(this).addClass("empty");
             }
+
+            // if ($(this).is(":empty") || $(this).val() === null || $(this).val() == "undefined" || $(this).val() === "") {
+            //     $(this).addClass("empty");
+            // }
 
             if ($(this).parent().next().is("[type=file]")) {
                 $(this).parent().addClass("fileinput");
@@ -57,7 +84,7 @@ $(function (){
     $(document).on("keyup change", ".form-control", function() {
         var self = $(this);
         setTimeout(function() {
-            if (self.val() === "") {
+            if (self.val() === "  && !self.hasClass('date')) {
                 self.addClass("empty");
             } else {
                 self.removeClass("empty");

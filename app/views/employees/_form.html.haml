@@ -8,15 +8,19 @@
 
 	= simple_form_for(@employee) do |f|
 		= f.error_notification
-		
+
 		.form-group
 			= f.text_field :name, :autofocus => true, class: 'form-control floating-label', placeholder: t('employees.forms.name')
 			= f.error :name
-		
+
 		.form-group
-			= f.association :punch_clock, collection: PunchClock.where(account: current_user.account), autofocus: true, class: 'form-control floating-label', placeholder: t('employees.forms.punch_clock')
+			= f.date_field :born_at, autofocus: true, class: 'date form-control floating-label', placeholder: t('employees.forms.born_at')
+			= f.error :born_at
+
+		.form-group
+			= f.association :punch_clock, collection: PunchClock.where(account: current_user.account), autofocus: true, class: 'form-control floating-label'#, placeholder: t('employees.forms.punch_clock')
 			= f.error :name
-		
+
 		.form-actions
 			= f.button :submit
 

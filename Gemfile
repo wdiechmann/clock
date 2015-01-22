@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.2'
+ruby '2.1.5'
 gem 'rails', '4.1.5'
 gem 'rails-i18n', '~> 4.0.0'
 gem 'roadie-rails'
@@ -16,7 +16,6 @@ gem 'devise'
 gem 'devise_invitable'
 gem 'haml-rails'
 gem 'mysql2'
-gem 'unicorn' # gem "puma"
 gem 'pundit'
 gem 'simple_form'
 gem 'upmin-admin'
@@ -33,7 +32,7 @@ group :development do
   # gem 'capistrano-puma', require: false
   #
   # see implementation here: https://github.com/capistrano/maintenance
-  gem 'capistrano-maintenance', github: "capistrano/maintenance", require: false 
+  gem 'capistrano-maintenance', github: "capistrano/maintenance", require: false
   #
   gem 'html2haml'
   gem 'hub', :require=>nil
@@ -51,4 +50,7 @@ group :test do
   gem 'database_cleaner'
   gem 'launchy'
   gem 'selenium-webdriver'
+end
+group :production do
+  gem 'unicorn' # gem "puma"
 end

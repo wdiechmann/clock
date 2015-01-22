@@ -14,10 +14,15 @@ module ApplicationHelper
 
   def list_every_day employee, month_range, &block
     dates = []
-    employee.entrances.map(&:clocked_at).each{ |d| dates[d.day]= d }
+    # where( 'entrances.clocked_at' => month_range).
+    employee.entrances.where( 'entrances.clocked_at' => month_range).each{ |e| dates[e.clocked_at.day]= e }
     (1..month_range.last.day.to_i).each do |day|
       yield day, dates[day]
     end
   end
-    
+
+  def show_date date
+    date.strftime '%d/%m/%Y'
+  end
+
 end

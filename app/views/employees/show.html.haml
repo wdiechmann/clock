@@ -4,9 +4,13 @@
 	%p
 		%b Navn:
 		= @employee.name
-		
+
+	%p
+		%b Født den:
+		= show_date @employee.born_at rescue ''
+
 	%p
 		= link_to t('employees.navigation.entrances'), employee_entrances_url(@employee)
-		
+
 	= link_to t(:edit), edit_employee_path(@employee), class: 'btn btn-primary'
 	= link_to t(:back), employees_path, class: 'btn btn-default btn-raised'

@@ -1,0 +1,116 @@
+- months = %w{ dummy januar februar marts april maj juni juli august september november december}
+- h3_flag = false
+
+:css
+  @media print {
+    h3 {
+      page-break-before: always;
+    }
+    button { display: none !important; }
+    .sick.selected, .sick.new_selected { background-color: #CC0C39 !important; }
+    .absent.selected, .absent.new_selected { background-color: #1693A7 !important; }
+    .unaccounted.selected, .unaccounted.new_selected { background-color: #E6781E !important; }
+    .holiday.selected, .holiday.new_selected { background-color: #C8CF02 !important; }
+    .free.selected, .free.new_selected { background-color: #98CF02 !important; }
+    tr.entrance td { width: 75px; height: 20px !important }
+  }
+  tr.entrance td { width: 75px; height: 30px }
+  .sick.selected, .sick.new_selected { background-color: #CC0C39 }
+  .absent.selected, .absent.new_selected { background-color: #1693A7 }
+  .unaccounted.selected, .unaccounted.new_selected { background-color: #E6781E }
+  .holiday.selected, .holiday.new_selected { background-color: #C8CF02 }
+  .free.selected, .free.new_selected { background-color: #98CF02 }
+  img.signature { src: asset_url(images/klitmoller.jpg)}
+
+  @page {
+    size:  21.0cm 29.5cm;
+  }
+
+
+%button.btn.btn-primary= t('month_list.update')
+
+#status_of_employees
+- @employees.each do |employee|
+  %h1
+  - if h3_flag
+    %h3
+
+  - h3_flag = true unless h3_flag
+
+  %table{ style: "width: 525px"}
+    %tr
+      %td{ colspan: 2, style: "width: 100%; font-size: 1.5em; height: 30px !important"}
+        = employee.name
+
+    %tr
+      %td{ style: "width: 75%;"}
+        født:
+        = show_date employee.born_at
+      %td{ style: "width: 25%;"}
+        måned:
+        = months[ @month_range.first.to_date.month]
+
+  %h2
+
+  %table.table-bordered
+    %thead
+      %td dato
+      %td mødt
+      %td syg
+      %td fravær
+      %td ikk acc. fravær
+      %td ferie
+      %td fri iflg aftale
+
+    %tbody
+      - list_every_day(employee, @month_range) do |day,entrance|
+        %tr.entrance{ id: "employee_#{employee.id}_date_#{@month_range.first.month}_#{day}_entrance_#{ entrance.id rescue '0'}"}
+          %td
+            = day
+          %td.present
+            = entrance.clocked_at.strftime "%H:%M" if (entrance && entrance.entrance_type == PRESENT)
+          %td.sick{ class: "#{'selected' if entrance && entrance.entrance_type == SICK}"}
+          %td.absent{ class: "#{'selected' if entrance && entrance.entrance_type == ABSENT}"}
+          %td.unaccounted{ class: "#{'selected' if entrance && entrance.entrance_type == UNACCOUNTED}"}
+          %td.holiday{ class: "#{'selected' if entrance &&  entrance.entrance_type == HOLIDAY}"}
+          %td.free{ class: "#{'selected' if entrance &&  entrance.entrance_type == FREE}"}
+
+  %h2
+
+%button.btn.btn-primary= t('month_list.update')
+
+:coffeescript
+
+  $('button').on 'click', (e) ->
+    data = { 'multi': true, 'elems': [] }
+    url = '/entrances.js'
+    for elem in $('.deleted, .selected')
+      do(elem) ->
+        #
+        # employee_1_date_1_9_entrance_0
+        prop = $(elem).closest('tr').prop('id').split("_")
+        data.elems.push { type: $(elem).prop('class'), employee: prop[1], month: prop[3], day: prop[4], entrance: prop[6] }
+    $.ajax
+      url: url,
+      type: 'POST',
+      data: data
+    .done (data,textStatus,jqHXR) ->
+      $('#status_of_employees').html(data)
+
+  $('.present').on 'click', (e) ->
+    prop = $(e.target).closest('tr').prop('id').split("_")
+    if $(this).text()!=""
+      $(this).text('')
+
+  for selector in [ '.sick', '.absent', '.unaccounted', '.holiday', '.free']
+    do(selector) ->
+      $(selector).on 'click', (e) ->
+        prop = $(e.target).closest('tr').prop('id').split("_")
+        if $(this).hasClass('selected')
+          $(this).removeClass('selected')
+          if prop[prop.length-1]!="0"
+            $(this).addClass('deleted')
+        else
+          $(this).addClass('selected')
+          if prop[prop.length-1]!="0"
+            $(this).removeClass('deleted')

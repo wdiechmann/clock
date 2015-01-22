@@ -31,6 +31,10 @@ da:
   confirm_new_password: "Gentag ny adgangskode"
   change_my_password: "Gem ny adgangskode"
   activerecord:
+    attributes:
+      employee:
+        punch_clock: "Stempelur"
+        born_at: "Født den"
     errors:
       models:
         employee:
@@ -61,7 +65,7 @@ da:
       sign_up: "Registrér"
       users: "Brugere"
       forgot: "Nulstil adgangskoden"
-      
+
     forms:
       name: "Dit navn"
       email: "Din email adresse"
@@ -76,7 +80,7 @@ da:
       cancel_button: "Luk min konto!"
       remember_me: "Husk mig"
       resend_confirmation: "Send en ny!"
-      
+
     confirmations:
       keep: "-"
       resend_confirmation: "Send instruktioner igen"

@@ -11,6 +11,40 @@ class EmployeesController < ApplicationController
     head(:ok) and return if entrance
     head(404)
   end
+  
+  def month_list
+    @month_range = Date.today.at_beginning_of_month..Date.today.at_end_of_month
+    # Account.all.each do |account|
+    #
+    #   employees = Employee.where( account: self ).joins(:entrances).where('entrances.clocked_at' => month_range)
+    #   render_to_string 'month_list.html.haml', locals: { employees: employees, month_range: month_range }
+    #
+    # end
+    # @employees = current_user.account.employees.joins('LEFT OUTER JOIN entrances ON entrances.employee_id=employees.id').where( 'entrances.clocked_at' => @month_range).order('employees.id','entrances.clocked_at')
+    # d1 = Date.today.at_beginning_of_month.to_s
+    # d2 = Date.today.at_end_of_month.to_s
+    # @employees = Employee.find_by_sql("
+    #   SELECT `employees`.`id` AS t0_r0, `employees`.`name` AS t0_r1, `employees`.`last_seen` AS t0_r2, `employees`.`created_at` AS t0_r3, `employees`.`updated_at` AS t0_r4, `employees`.`punch_clock_id` AS t0_r5, `employees`.`account_id` AS t0_r6, `employees`.`born_at` AS t0_r7, `entrances`.`id` AS t1_r0, `entrances`.`employee_id` AS t1_r1, `entrances`.`clocked_at` AS t1_r2, `entrances`.`created_at` AS t1_r3, `entrances`.`updated_at` AS t1_r4, `entrances`.`entrance_type` AS t1_r5
+    #   FROM `employees`
+    #   LEFT OUTER JOIN `entrances` ON `entrances`.`employee_id` = `employees`.`id` AND (`entrances`.`clocked_at` BETWEEN '"+d1+"' AND '"+d2+"')
+    #   WHERE `employees`.`account_id` = " + current_user.account.id.to_s + "
+    #   ORDER BY employees.id, entrances.clocked_at"
+    # )
+    #
+    #
+    #
+    # @employees = current_user.account.employees.joins('LEFT OUTER JOIN `entrances` ON `entrances`.`employee_id` = `employees`.`id` AND (`entrances`.`clocked_at` BETWEEN "'+d1+'" AND "'+d2+'")')
+    #.includes(:entrances_in_month_range)#.where( 'entrances.clocked_at' => @month_range).order('employees.id','entrances.clocked_at')
+    # @employees = @employees.order('employees.id','entrances.clocked_at')
+    @employees = current_user.account.employees.includes(:entrances)
+    @employees = current_user.account.employees.
+    joins("left outer join entrances on entrances.id is NULL or (entrances.clocked_at between '"+@month_range.min.to_s+"' and '"+@month_range.min.to_s+"')")
+
+    respond_to do |format|
+      format.html #{}
+    end
+  end
+
 
   # GET /employees
   # GET /employees.json
@@ -100,6 +134,6 @@ class EmployeesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def employee_params
       params[:employee][:account_id]=current_user.account.id
-      params.require(:employee).permit(:name, :punch_clock_id,:account_id)
+      params.require(:employee).permit(:name, :punch_clock_id,:account_id, :born_at)
     end
 end

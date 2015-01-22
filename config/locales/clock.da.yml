@@ -20,26 +20,32 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 da:
-  
+
+  month_list:
+    update: "Opdatér"
+
   save: "Gem"
   show: "Vis"
   accounts:
     accounts: "Min konto"
-    
+
     forms:
       name: "Kontonavn"
       active: "Aktiv"
-    
+
   employees:
+
+    month_list: "Månedsopgørelse"
 
     titles:
       listing_employees:  "Oversigt over brugere"
 
     employee: "Bruger"
     employees: "Brugere"
-    
+
     forms:
       name: "Navn"
+      born_at: "Født den"
       punch_clock: "stempelur"
 
     navigation:
@@ -48,7 +54,7 @@ da:
       editing_an_employee: "ret en bruger"
       delete_employee: "Slet denne bruger"
       entrances: "stemplinger"
-      
+
     table:
       name: "Bruger navn"
       latest: "sidst set"
@@ -63,12 +69,12 @@ da:
 
   jobber_mailer:
     welcome: "Velkommen"
-    
+
   jobbers:
     navigation:
       adding_a_jobber: "Tilføj en jobber"
       editing_a_jobber: "Ret en jobber"
-      
+
     form:
       name: "Fulde navn"
       street: "Gade og nummer"
@@ -76,22 +82,22 @@ da:
       phone_number: "Telefon nummer"
       email: "Email adresse"
 
-    
+
   punch_clocks:
     punch_clocks: "Stempelure"
-    
+
     titles:
       listing_punch_clocks: "Oversigt over stempelure"
-      
+
     created_ok: "Stempeluret blev oprettet korrekt"
     updated_ok: "Stempeluret blev rettet korrekt"
     deleted_ok: "Stempeluret blev slettet korrekt"
-    
+
     navigation:
       adding_a_punch_clock: "Tilføj et stempelur"
       editing_a_punch_clock: "Ret et stempelur"
       new_punch_clock:  "Opret et nyt stempelur"
-      
+
     form:
       name: "Navn på stempelur"
       street: "Gade og nummer"

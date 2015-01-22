@@ -9,14 +9,14 @@ $(function (){
                       ".nav-tabs a:not(.withoutripple)," +
                       ".withripple" );
     }
-    
+
     var empty = function(fld) {
       try {
         data = $(fld).val();
-      } catch(exception){ 
+      } catch(exception){
         return true;
       }
-      
+
       if(typeof(data) == 'number' || typeof(data) == 'boolean') { return false }
       if(typeof(data) == 'undefined' || data === null) { return true }
       if(typeof(data.length) != 'undefined') { return data.length == 0 }
@@ -49,7 +49,7 @@ $(function (){
                 $(this).after("<div class=floating-label>" + placeholder + "</div>");
             }
 
-            if ( empty(this) ) {
+            if ( empty(this) && !$(this).hasClass('date')) {
                 $(this).addClass("empty");
             }
 
@@ -79,11 +79,11 @@ $(function (){
     $(document).on("keyup change", ".form-control", function() {
         var self = $(this);
         setTimeout(function() {
-            if (self.val() === "") {
-                self.addClass("empty");
-            } else {
-                self.removeClass("empty");
-            }
+          if (self.val() === ""  && !self.hasClass('date')) {
+            self.addClass("empty");
+          } else {
+              self.removeClass("empty");
+          }
         }, 1);
     });
     $(document)

@@ -36,7 +36,7 @@ Start by reading through [this 6 part guide on setting up the app and environmen
 		rbenv local 2.1.2
 		rails new . -m https://raw.github.com/RailsApps/rails-composer/master/composer.rb
 		spring rails server
-		mate .env config/production.rb config/clock.nginx.conf config/secrets.yml config/unicorn_init.sh config/unicorn.rb 
+		mate .env config/production.rb config/clock.nginx.conf config/secrets.yml config/unicorn_init.sh config/unicorn.rb
 		rake secret
 		chmod +x unicorn_init.sh
 
@@ -47,7 +47,7 @@ Start by reading through [this 6 part guide on setting up the app and environmen
 		sudo chmod g+w /etc/init.d
 		sudo service nginx restart
 		sudo update-rc.d unicorn_clock defaults
-		
+
 
 
 
@@ -120,8 +120,13 @@ mate .
 	<edit config/deploy.rb>
 	<edit config/deploy/production.rb>
   <add config/<project>.nginx.conf
-		
+
 <setup GitHub repo>
 <add bookmark to SourceTree>
 
 spring rails server
+
+Almanak
+-------
+
+20-01-15 - how to collect correct group of entrances in one scoop - https://groups.google.com/d/msg/rubyonrails-talk/kHYW5cid11A/30jBs25zl84J

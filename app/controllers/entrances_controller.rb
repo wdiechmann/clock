@@ -24,15 +24,49 @@ class EntrancesController < ApplicationController
   # POST /entrances
   # POST /entrances.json
   def create
-    @entrance = Entrance.new(entrance_params)
+    if params[:multi]=='true'
+      #
+      # {"type"=>"free new_selected", "employee"=>"1", "month"=>"1", "day"=>"5", "entrance"=>"0"}
+      #
+      entrances = []
+      params['elems'].each do |k,elem|
+        etype = ENTRANCE_TYPES.index( elem[:type].gsub( /selected/,'').strip.split(" ")[0].strip)
+        if elem[:entrance]=="0"
+          Entrance.create( clocked_at: Date.new( Date.today.year, elem[:month].to_i, elem[:day].to_i), employee_id: elem[:employee], entrance_type: etype)
+        else
+          entrance = Entrance.find(elem[:entrance])
+          if elem[:type] =~ /deleted/
+            entrance.entrance_type = -1
+          else
+            entrance.entrance_type = etype
+          end
+          entrances << entrance
+        end
+      end
+      entrances.sort.each do |entrance|
+        if entrance.entrance_type == -1
+          entrance.destroy
+        else
+          entrance.save
+        end
+      end
 
-    respond_to do |format|
-      if @entrance.save
-        format.html { redirect_to @entrance, notice: 'Entrance was successfully created.' }
-        format.json { render :show, status: :created, location: @entrance }
-      else
-        format.html { render :new }
-        format.json { render json: @entrance.errors, status: :unprocessable_entity }
+      respond_to do |format|
+        format.html
+        format.js   { render text: 'alt er opdateret'}
+      end
+
+    else
+      entrance_params[:entrance_type] = PRESENT
+      @entrance = Entrance.new(entrance_params)
+      respond_to do |format|
+        if @entrance.save
+          format.html { redirect_to @entrance, notice: 'Entrance was successfully created.' }
+          format.json { render :show, status: :created, location: @entrance }
+        else
+          format.html { render :new }
+          format.json { render json: @entrance.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -66,7 +100,7 @@ class EntrancesController < ApplicationController
     def set_entrance
       @entrance = Entrance.find(params[:id])
     end
-    
+
     def set_entrances
       if request.path =~ /employees/
         @entrances = Employee.find(params[:employee_id]).entrances.order(clocked_at: :desc)
@@ -77,6 +111,6 @@ class EntrancesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def entrance_params
-      params.require(:entrance).permit(:employee_id, :clocked_at)
+      params.require(:entrance).permit(:employee_id, :clocked_at, :entrance_type)
     end
 end

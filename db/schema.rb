@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141029115447) do
+ActiveRecord::Schema.define(version: 20150109080044) do
 
   create_table "accounts", force: true do |t|
     t.string   "name"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20141029115447) do
     t.datetime "updated_at"
     t.integer  "punch_clock_id"
     t.integer  "account_id"
+    t.datetime "born_at"
   end
 
   add_index "employees", ["account_id"], name: "index_employees_on_account_id", using: :btree
@@ -37,6 +38,7 @@ ActiveRecord::Schema.define(version: 20141029115447) do
     t.datetime "clocked_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "entrance_type"
   end
 
   add_index "entrances", ["employee_id"], name: "index_entrances_on_employee_id", using: :btree
