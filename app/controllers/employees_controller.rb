@@ -8,10 +8,11 @@ class EmployeesController < ApplicationController
   def last_seen
     entrance = Entrance.create( employee: @employee, clocked_at: DateTime.parse(params[:at]))
     @employee.update_attributes( last_seen: entrance.clocked_at)
+    entrance.update_attributes entrance_type: PRESENT
     head(:ok) and return if entrance
     head(404)
   end
-  
+
   def month_list
     @month_range = Date.today.at_beginning_of_month..Date.today.at_end_of_month
     # Account.all.each do |account|
