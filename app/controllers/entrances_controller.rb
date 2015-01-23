@@ -24,6 +24,7 @@ class EntrancesController < ApplicationController
   # POST /entrances
   # POST /entrances.json
   def create
+
     if params[:multi]=='true'
       #
       # {"type"=>"free new_selected", "employee"=>"1", "month"=>"1", "day"=>"5", "entrance"=>"0"}
@@ -38,6 +39,9 @@ class EntrancesController < ApplicationController
           if elem[:type] =~ /deleted/
             entrance.entrance_type = -1
           else
+            if entrance.clocked_at.to_date == Date.today && entrance.entrance_type == PRESENT
+              entrance.employee.update_attributes( last_seen: nil)
+            end
             entrance.entrance_type = etype
           end
           entrances << entrance
@@ -45,6 +49,9 @@ class EntrancesController < ApplicationController
       end
       entrances.sort.each do |entrance|
         if entrance.entrance_type == -1
+          if entrance.clocked_at.to_date == Date.today
+            entrance.employee.update_attributes( last_seen: nil)
+          end
           entrance.destroy
         else
           entrance.save
@@ -53,7 +60,7 @@ class EntrancesController < ApplicationController
 
       respond_to do |format|
         format.html
-        format.js   { render text: 'alt er opdateret'}
+        format.js   { head 200 }
       end
 
     else

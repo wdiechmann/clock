@@ -27,9 +27,12 @@
   }
 
 
-%button.btn.btn-primary= t('month_list.update')
+%button.update.btn.btn-primary= 'Udskriv'
 
-#status_of_employees
+.alert
+  .alert-info
+    #status_of_employees
+
 - @employees.each do |employee|
   %h1
   - if h3_flag
@@ -77,25 +80,56 @@
 
   %h2
 
-%button.btn.btn-primary= t('month_list.update')
+%button.btn.btn-primary= 'Udskriv'
+
+:javascript
+  // GET over html,script works with fail and done when controller responds_to format.js
+  //
+  function test_js(){
+    var jqxhr = $.ajax({
+      url: "/entrances",
+      type: "POST",
+      dataType: "json"
+    }).done( function() {
+      console.log("done");
+    }).fail( function(){
+      console.log("fail");
+    }).always( function(){
+      console.log(jqxhr);
+    });
+  }
 
 :coffeescript
 
+  update_entrances = false
+  $('.alert').hide()
+
+  post_changes = (url,data) ->
+    if !update_entrances
+      window.print()
+    else
+    	jqxhr = $.ajax(
+        url: url
+        type: 'POST'
+        dataType: 'script'
+        data: data
+      ).done( () ->
+        update_entrances = false
+        $('#status_of_employees').html('Alle stemplinger opdateret!')
+        $('.alert').show()
+        window.print()
+      ).fail () ->
+        $('#status_of_employees').html(jqxhr.responseText)
+
   $('button').on 'click', (e) ->
     data = { 'multi': true, 'elems': [] }
-    url = '/entrances.js'
     for elem in $('.deleted, .selected')
       do(elem) ->
         #
         # employee_1_date_1_9_entrance_0
         prop = $(elem).closest('tr').prop('id').split("_")
         data.elems.push { type: $(elem).prop('class'), employee: prop[1], month: prop[3], day: prop[4], entrance: prop[6] }
-    $.ajax
-      url: url,
-      type: 'POST',
-      data: data
-    .done (data,textStatus,jqHXR) ->
-      $('#status_of_employees').html(data)
+    post_changes('/entrances.js',data)
 
   $('.present').on 'click', (e) ->
     prop = $(e.target).closest('tr').prop('id').split("_")
@@ -105,6 +139,9 @@
   for selector in [ '.sick', '.absent', '.unaccounted', '.holiday', '.free']
     do(selector) ->
       $(selector).on 'click', (e) ->
+        $('.alert').show()
+        $('#status_of_employees').html('husk at trykke UDSKRIV - når du er færdig med at rette!')
+        update_entrances = true
         prop = $(e.target).closest('tr').prop('id').split("_")
         if $(this).hasClass('selected')
           $(this).removeClass('selected')
