@@ -7,6 +7,7 @@
       page-break-before: always;
     }
     button { display: none !important; }
+    .alert { display: none !important; }
     .sick.selected, .sick.new_selected { background-color: #CC0C39 !important; }
     .absent.selected, .absent.new_selected { background-color: #1693A7 !important; }
     .unaccounted.selected, .unaccounted.new_selected { background-color: #E6781E !important; }
@@ -27,7 +28,8 @@
   }
 
 
-%button.update.btn.btn-primary= 'Udskriv'
+%button.print_it.btn.btn-primary= 'Udskriv'
+%button.save_it.btn.btn-warning= 'Gem'
 
 .alert
   .alert-info
@@ -80,33 +82,18 @@
 
   %h2
 
-%button.btn.btn-primary= 'Udskriv'
-
-:javascript
-  // GET over html,script works with fail and done when controller responds_to format.js
-  //
-  function test_js(){
-    var jqxhr = $.ajax({
-      url: "/entrances",
-      type: "POST",
-      dataType: "json"
-    }).done( function() {
-      console.log("done");
-    }).fail( function(){
-      console.log("fail");
-    }).always( function(){
-      console.log(jqxhr);
-    });
-  }
+%button.print_it.btn.btn-primary= 'Udskriv'
+%button.save_it.btn.btn-warning= 'Gem'
 
 :coffeescript
 
   update_entrances = false
   $('.alert').hide()
+  $('button.save_it').hide()
 
-  post_changes = (url,data) ->
+  post_changes = (url,data,$elem) ->
     if !update_entrances
-      window.print()
+      window.print() if $elem.hasClass('print_it')
     else
     	jqxhr = $.ajax(
         url: url
@@ -117,7 +104,8 @@
         update_entrances = false
         $('#status_of_employees').html('Alle stemplinger opdateret!')
         $('.alert').show()
-        window.print()
+        $('button.save_it').hide()
+        window.print() if $elem.hasClass('print_it')
       ).fail () ->
         $('#status_of_employees').html(jqxhr.responseText)
 
@@ -129,9 +117,10 @@
         # employee_1_date_1_9_entrance_0
         prop = $(elem).closest('tr').prop('id').split("_")
         data.elems.push { type: $(elem).prop('class'), employee: prop[1], month: prop[3], day: prop[4], entrance: prop[6] }
-    post_changes('/entrances.js',data)
+    post_changes('/entrances.js',data,$(e.target))
 
   $('.present').on 'click', (e) ->
+    $('button.save_it').show()
     prop = $(e.target).closest('tr').prop('id').split("_")
     if $(this).text()!=""
       $(this).text('')
@@ -140,7 +129,8 @@
     do(selector) ->
       $(selector).on 'click', (e) ->
         $('.alert').show()
-        $('#status_of_employees').html('husk at trykke UDSKRIV - når du er færdig med at rette!')
+        $('button.save_it').show()
+        $('#status_of_employees').html('husk at trykke GEM - når du er færdig med at rette!')
         update_entrances = true
         prop = $(e.target).closest('tr').prop('id').split("_")
         if $(this).hasClass('selected')
