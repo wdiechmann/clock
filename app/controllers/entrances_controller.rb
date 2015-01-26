@@ -30,15 +30,19 @@ class EntrancesController < ApplicationController
       # {"type"=>"free new_selected", "employee"=>"1", "month"=>"1", "day"=>"5", "entrance"=>"0"}
       #
       entrances = []
-      binding.pry
       params['elems'].each do |k,elem|
         etype = ENTRANCE_TYPES.index( elem[:type].gsub( /selected/,'').strip.split(" ")[0].strip)
         if elem[:entrance]=="0"
           Entrance.create( clocked_at: Date.new( Date.today.year, elem[:month].to_i, elem[:day].to_i), employee_id: elem[:employee], entrance_type: etype)
         else
+          entrance_exists = false
           entrance = Entrance.find(elem[:entrance])
+          if entrances.include?(entrance)
+            entrance = entrances.delete(entrance)
+            entrance_exists = true
+          end
           if elem[:type] =~ /deleted/
-            entrance.entrance_type = -1
+            entrance.entrance_type = -1 if !entrance_exists
           else
             if entrance.clocked_at.to_date == Date.today && entrance.entrance_type == PRESENT
               entrance.employee.update_attributes( last_seen: nil)
@@ -48,7 +52,7 @@ class EntrancesController < ApplicationController
           entrances << entrance
         end
       end
-      entrances.sort.each do |entrance|
+      entrances.sort{|x,y| x.entrance_type <=> y.entrance_type}.each do |entrance|
         if entrance.entrance_type == -1
           if entrance.clocked_at.to_date == Date.today
             entrance.employee.update_attributes( last_seen: nil)

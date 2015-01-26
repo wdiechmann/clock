@@ -6,6 +6,7 @@ class EmployeesController < ApplicationController
 
   # GET /employees/1/last_seen
   def last_seen
+    @employee.entrances.where('clocked_at between ? and ?', DateTime.now.at_beginning_of_day,DateTime.now.at_end_of_day).destroy_all
     entrance = Entrance.create( employee: @employee, clocked_at: DateTime.parse(params[:at]))
     @employee.update_attributes( last_seen: entrance.clocked_at)
     entrance.update_attributes entrance_type: PRESENT
