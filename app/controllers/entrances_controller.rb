@@ -30,6 +30,7 @@ class EntrancesController < ApplicationController
       # {"type"=>"free new_selected", "employee"=>"1", "month"=>"1", "day"=>"5", "entrance"=>"0"}
       #
       entrances = []
+      binding.pry
       params['elems'].each do |k,elem|
         etype = ENTRANCE_TYPES.index( elem[:type].gsub( /selected/,'').strip.split(" ")[0].strip)
         if elem[:entrance]=="0"

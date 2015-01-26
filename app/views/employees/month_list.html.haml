@@ -120,8 +120,13 @@
     post_changes('/entrances.js',data,$(e.target))
 
   $('.present').on 'click', (e) ->
+    update_entrances = true
+    $('.alert').show()
     $('button.save_it').show()
+    $('#status_of_employees').html('husk at trykke GEM - når du er færdig med at rette!')
     prop = $(e.target).closest('tr').prop('id').split("_")
+    if prop[prop.length-1]!="0"
+      $(this).addClass('deleted')
     if $(this).text()!=""
       $(this).text('')
 
