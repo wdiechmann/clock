@@ -1,27 +1,24 @@
-:css
-	i.delete-button.icon-material-cancel { font-size: 30px;}
-
 .authform
 	%h1= t('employees.titles.listing_employees')
 
-	= simple_form_for(Employee.new) do |f|
-		%table.table.table-striped.table-hover
-			%thead
-				%tr
-					%th= t('employees.table.name')
-					%th= t('employees.table.latest')
-					%th= t('employees.table.punch_clock')
-					%th= t(:delete)
+	/ = simple_form_for(Employee.new) do |f|
+	%table.table.table-striped.table-hover
+		%thead
+			%tr
+				%th= t('employees.table.name')
+				%th= t('employees.table.latest')
+				%th= t('employees.table.punch_clock')
+				%th= t(:delete)
 
-			%tbody
-				- @employees.includes(:punch_clock).each do |employee|
-					%tr
-						%td.name= link_to employee.name, employee_path(employee)
-						%td= "#{show_last_datetime(employee)}"
-						%td= employee.punch_clock.nil? ? "" : employee.punch_clock.name
-						%td
-							%button.btn.btn-fab.btn-fab-mini.btn-raised.btn-sm.btn-delete.btn-material-red-A700.delete-button{ id: "employee_id_#{employee.id}", title: "#{ t('employees.navigation.delete_employee') }" }
-								%i.mdi-navigation-cancel
+		%tbody
+			- @employees.includes(:punch_clock).each do |employee|
+				%tr
+					%td.name= link_to employee.name, employee_path(employee)
+					%td= "#{show_last_datetime(employee)}"
+					%td= employee.punch_clock.nil? ? "" : employee.punch_clock.name
+					%td{ id: "employee_id_#{employee.id}", title: "#{ t('employees.navigation.delete_employee') }" }
+						%button.btn.btn-fab.btn-fab-mini.btn-raised.btn-sm.btn-delete.btn-material-red-A700
+							%i.mdi-navigation-cancel.delete-button
 
 		%br
 
@@ -29,12 +26,11 @@
 
 :coffeescript
 
-	$('button.delete-button').on 'click', (e) ->
-		elem = $(e.target)[0]
+	$('button').on 'click', (e) ->
+		elem = $(this).closest('td')[0]
 		employee_id = elem.id.replace /.*\_/, ''
 		row = $(elem).closest('tr')
 		employee_name = $(row).find('.name').find('a').html()
-		e.preventDefault()
 		swal
 			title: "Er du sikker?",
 			text: "Hvis du sletter brugeren, kan du ikke få stemplingerne tilbage igen!",

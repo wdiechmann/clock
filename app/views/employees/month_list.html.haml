@@ -3,6 +3,11 @@
 
 :css
   @media print {
+    .nav-pills, .save_it, .alert, .pill {
+      display: none;
+    }
+
+
     h3 {
       page-break-before: always;
     }
@@ -27,6 +32,25 @@
     size:  21.0cm 29.5cm;
   }
 
+  @media screen {
+    .employee_tabbed_panel {
+      position: absolute;
+      top: 0px;
+      left: 1px;
+      display: none;
+    }
+    .employees_panels {
+      position: relative;
+    }
+    .save_it, .alert {
+      display: none;
+    }
+    .pill {
+      cursor: pointer
+    }
+    .nav-pills { margin-bottom: 20px; }
+  }
+
 
 %button.print_it.btn.btn-primary= 'Udskriv'
 %button.save_it.btn.btn-warning= 'Gem'
@@ -35,61 +59,66 @@
   .alert-info
     #status_of_employees
 
-- @employees.each do |employee|
-  %h1
-  - if h3_flag
-    %h3
+- employee_flag = @employees.first
+%ul.nav.nav-pills
+  - @employees.each do  |employee|
+    %li{ class: "pill #{'active' if employee_flag == employee && employee_flag=employee}"}
+      %a.show_employee_tab{ id: "employee_tab_#{employee.id}"}= employee.name
 
-  - h3_flag = true unless h3_flag
+.employees_panels
+  - @employees.each do |employee|
+    .employee_tabbed_panel{ id: "employee_tabbed_panel_#{employee.id}"}
+      %h1
+      - if h3_flag
+        %h3
 
-  %table{ style: "width: 525px"}
-    %tr
-      %td{ colspan: 2, style: "width: 100%; font-size: 1.5em; height: 30px !important"}
-        = employee.name
+      - h3_flag = true unless h3_flag
 
-    %tr
-      %td{ style: "width: 75%;"}
-        født:
-        = show_date employee.born_at
-      %td{ style: "width: 25%;"}
-        måned:
-        = months[ @month_range.first.to_date.month]
+      %table{ style: "width: 525px"}
+        %tr
+          %td{ colspan: 2, style: "width: 100%; font-size: 1.5em; height: 30px !important"}
+            = employee.name
 
-  %h2
+        %tr
+          %td{ style: "width: 75%;"}
+            født:
+            = show_date employee.born_at
+          %td{ style: "width: 25%;"}
+            måned:
+            = months[ @month_range.first.to_date.month]
 
-  %table.table-bordered
-    %thead
-      %td dato
-      %td mødt
-      %td syg
-      %td fravær
-      %td ikk acc. fravær
-      %td ferie
-      %td fri iflg aftale
+      %h2
 
-    %tbody
-      - list_every_day(employee, @month_range) do |day,entrance|
-        %tr.entrance{ id: "employee_#{employee.id}_date_#{@month_range.first.month}_#{day}_entrance_#{ entrance.id rescue '0'}"}
-          %td
-            = day
-          %td.present
-            = entrance.clocked_at.strftime "%H:%M" if (entrance && entrance.entrance_type == PRESENT)
-          %td.sick{ class: "#{'selected' if entrance && entrance.entrance_type == SICK}"}
-          %td.absent{ class: "#{'selected' if entrance && entrance.entrance_type == ABSENT}"}
-          %td.unaccounted{ class: "#{'selected' if entrance && entrance.entrance_type == UNACCOUNTED}"}
-          %td.holiday{ class: "#{'selected' if entrance &&  entrance.entrance_type == HOLIDAY}"}
-          %td.free{ class: "#{'selected' if entrance &&  entrance.entrance_type == FREE}"}
+      %table.table-bordered
+        %thead
+          %td dato
+          %td mødt
+          %td syg
+          %td fravær
+          %td ikk acc. fravær
+          %td ferie
+          %td fri iflg aftale
 
-  %h2
+        %tbody
+          - list_every_day(employee, @month_range) do |day,entrance|
+            %tr.entrance{ id: "employee_#{employee.id}_date_#{@month_range.first.month}_#{day}_entrance_#{ entrance.id rescue '0'}"}
+              %td
+                = day
+              %td.present
+                = entrance.clocked_at.strftime "%H:%M" if (entrance && entrance.entrance_type == PRESENT)
+              %td.sick{ class: "#{'selected' if entrance && entrance.entrance_type == SICK}"}
+              %td.absent{ class: "#{'selected' if entrance && entrance.entrance_type == ABSENT}"}
+              %td.unaccounted{ class: "#{'selected' if entrance && entrance.entrance_type == UNACCOUNTED}"}
+              %td.holiday{ class: "#{'selected' if entrance &&  entrance.entrance_type == HOLIDAY}"}
+              %td.free{ class: "#{'selected' if entrance &&  entrance.entrance_type == FREE}"}
 
-%button.print_it.btn.btn-primary= 'Udskriv'
-%button.save_it.btn.btn-warning= 'Gem'
+      %h2
 
 :coffeescript
 
   update_entrances = false
-  $('.alert').hide()
-  $('button.save_it').hide()
+
+  $($('.employee_tabbed_panel')[0]).show()
 
   post_changes = (url,data,$elem) ->
     if !update_entrances
@@ -108,6 +137,13 @@
         window.print() if $elem.hasClass('print_it')
       ).fail () ->
         $('#status_of_employees').html(jqxhr.responseText)
+
+  $('li.pill').on 'click', (e) ->
+    $('li.pill').removeClass('active')
+    $(this).addClass('active')
+    prop = $(this).find('a').prop('id').split("_")
+    $('.employee_tabbed_panel').hide()
+    $('#employee_tabbed_panel_'+prop[prop.length-1]).show()
 
   $('button').on 'click', (e) ->
     data = { 'multi': true, 'elems': [] }
