@@ -18,7 +18,7 @@ namespace :deploy do
       exit
     end
   end
-  
+
   desc "Makes sure databases are setup"
   task :check_database do
     on roles(:db) do |host|
@@ -44,7 +44,7 @@ namespace :deploy do
    end
   end
 
-  %w[start stop restart].each do |command|
+  %w[start stop].each do |command|
     desc "#{command} Unicorn server."
     task command do
       on roles(:app) do
@@ -52,6 +52,15 @@ namespace :deploy do
       end
     end
   end
+
+  desc "Restart Unicorn"
+  task :restart do
+    on roles(:app) do
+      execute "cd #{current_path};config/unicorn_init.sh stop"
+      execute "cd #{current_path};config/unicorn_init.sh start"
+    end
+  end
+      
 
   before :deploy, "deploy:check_revision"
   before :migrate, "deploy:check_database"

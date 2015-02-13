@@ -5,6 +5,7 @@ gem 'rails-i18n', '~> 4.0.0'
 gem 'roadie-rails'
 #gem 'bootstrap-material-design'
 gem 'sass-rails', '~> 4.0.3'
+gem "bower-rails", "~> 0.9.2"
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
 gem 'turbolinks'
