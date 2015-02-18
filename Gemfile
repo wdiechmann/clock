@@ -21,6 +21,14 @@ gem 'pundit'
 gem 'simple_form'
 gem 'upmin-admin'
 gem 'dotenv-rails'
+
+source 'https://rails-assets.org' do
+  gem 'rails-assets-sweetalert'
+  gem 'rails-assets-jquery'
+  gem 'rails-assets-jquery-ujs'
+  gem 'rails-assets-bootstrap-material-design'
+end
+
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_21]
