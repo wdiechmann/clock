@@ -1,4 +1,4 @@
-lock "3.1.0"
+lock "3.3.5"
 set :application, 'clock'
 set :repo_url, 'git@github.com:wdiechmann/clock.git'
 
@@ -9,7 +9,7 @@ set :rbenv_type, :user # or :system, depends on your rbenv setup
 set :rbenv_ruby, '2.1.2'
 set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
 set :rbenv_map_bins, %w{rake gem bundle ruby rails}
-set :rbenv_roles, :all 
+set :rbenv_roles, :all
 
 # default value
 
@@ -61,7 +61,15 @@ namespace :deploy do
   #     # end
   #   end
   # end
+  desc 'chmod config/unicorn_init.sh'
+  task :chmod do
+    on roles(:app), in: :sequence do
+      within release_path do
+        run 'chmod +x config/unicorn_init.sh'
+      end
+    end
+  end
 
   after :finishing, 'deploy:cleanup'
-
+  after :finishing, 'deploy:chmod'
 end
