@@ -325,10 +325,10 @@ DEPENDENCIES
   pry
   pundit
   rails (= 4.1.5)
-  rails-assets-bootstrap-material-design!
-  rails-assets-jquery!
-  rails-assets-jquery-ujs!
-  rails-assets-sweetalert!
+  rails-assets-bootstrap-material-design
+  rails-assets-jquery
+  rails-assets-jquery-ujs
+  rails-assets-sweetalert
   rails-i18n (~> 4.0.0)
   rails_layout
   roadie-rails
