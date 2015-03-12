@@ -69,15 +69,17 @@ class EntrancesController < ApplicationController
       end
 
     else
-      entrance_params[:entrance_type] = PRESENT
+      params[:entrance][:entrance_type] = PRESENT
       @entrance = Entrance.new(entrance_params)
       respond_to do |format|
         if @entrance.save
           format.html { redirect_to @entrance, notice: 'Entrance was successfully created.' }
           format.json { render :show, status: :created, location: @entrance }
+          format.js   { head 200 }
         else
           format.html { render :new }
           format.json { render json: @entrance.errors, status: :unprocessable_entity }
+          format.js   { head 403 }
         end
       end
     end

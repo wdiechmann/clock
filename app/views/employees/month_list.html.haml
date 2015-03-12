@@ -114,12 +114,98 @@
 
       %h2
 
+
+  #entrance_modal.modal.fade{ tabindex:"-1", role:"dialog", :"aria-labelledby"=>"entranceTitle", :"aria-hidden"=>"true" }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %button{ type:"button", class:"close", :"data-dismiss"=>"modal", :"aria-label"=>"Close"}
+            %span{ :"aria-hidden"=>"true"} &times;
+          %h4.modal-title{ id: "entranceTitle"}	Stempelur for
+
+        .modal-body
+          %form
+            .form-group
+              %input.entrance_employee_id{ type:"hidden", id:"entrance_employee_id", name: "entrance[employee_id]"}
+
+            .form-group
+              %label{ for:"entrance_date", class:"control-label"} Dato:
+              %input.entrance_date{ type:"text",  autofocus: "autofocus", class:"form-control", name: "entrance[date]", id:"entrance_date"}
+
+
+            .form-group
+              %label{ for:"entrance_time", class:"control-label"} Kl:
+              %input.entrance_time{ type:"text", class:"form-control", name: "entrance[time]", id:"entrance_time", placeholder: '23.59'}
+
+        .modal-footer
+          %a.btn.btn-default{ type:"button", :"data-dismiss"=>"modal"} Fortryd
+          %a.btn.btn-primary{ type:"button", id: "send_entrance"} Send
+
+
 :coffeescript
 
   update_entrances = false
+  employee_to_edit = null
+  date_to_edit = null
+  element_to_edit = null
+
+  # props
+  #   employee_employee.id_date_@month_range.first.month_day_entrance_entrance.id
+  #   employee,1,date,1,1,entrance,2
+  #
 
   $($('.employee_tabbed_panel')[0]).show()
 
+
+  #
+  # set focus on modal
+  #
+  $('#entrance_modal').on 'shown.bs.modal', () ->
+    $('.entrance_time').focus()
+
+  #
+  # show modal on empty .present TD's
+  #
+  accept_entrance = (t_,elem,props) ->
+    $(t_).addClass('inserted')
+    element_to_edit = t_
+    $('#entrance_modal').modal()
+    $('.modal-title').text( $('.modal-title').text() + ' ' + $('li.pill.active a').text() )
+    employee_to_edit = props[1]
+    $('.entrance_employee_id').val(props[1])
+    today = new Date()
+    date_to_edit = new Date( props[3] + '/' + props[4] + '/' + today.getFullYear().toString()  )
+    $('.entrance_date').val(date_to_edit.toLocaleDateString())
+
+  #
+  # respond to save on empty TD modal
+  #
+  $('#send_entrance').on 'click', (e) ->
+    date = $('.entrance_date').val().split("/")
+    time = $('.entrance_time').val().split(".")
+    # date_to_edit = new Date( date[1] + '-' + date[0] + '-' + date[2] + ' ' + time[0] + ':' + time[1] )
+    date_to_edit = date[0] + '-' + date[1] + '-' + date[2] + ' ' + time[0] + ':' + time[1]
+    # console.log date_to_edit.toString()
+    # console.log date_to_edit.toLocaleString()
+    # console.log date_to_edit.toGMTString()
+    # console.log date_to_edit.toISOString()
+
+    data = { 'entrance': { 'employee_id': employee_to_edit, 'clocked_at': date_to_edit } }
+    jqxhr = $.ajax(
+      url: '/entrances.js'
+      type: 'POST'
+      dataType: 'script'
+      data: data
+    ).done( () ->
+      $('#entrance_modal').modal('hide')
+      $(element_to_edit).text( time[0] + ':' + time[1] )
+    ).fail () ->
+      $('#status_of_employees').html(jqxhr.responseText)
+
+
+  #
+  # send all changes on page
+  #
   post_changes = (url,data,$elem) ->
     if !update_entrances
       window.print() if $elem.hasClass('print_it')
@@ -138,6 +224,9 @@
       ).fail () ->
         $('#status_of_employees').html(jqxhr.responseText)
 
+  #
+  # move to this tab
+  #
   $('li.pill').on 'click', (e) ->
     $('li.pill').removeClass('active')
     $(this).addClass('active')
@@ -145,7 +234,10 @@
     $('.employee_tabbed_panel').hide()
     $('#employee_tabbed_panel_'+prop[prop.length-1]).show()
 
-  $('button').on 'click', (e) ->
+  #
+  # respond to buttons print and save
+  #
+  $('.print_it,.save_it').on 'click', (e) ->
     data = { 'multi': true, 'elems': [] }
     for elem in $('.deleted, .selected')
       do(elem) ->
@@ -155,17 +247,25 @@
         data.elems.push { type: $(elem).prop('class'), employee: prop[1], month: prop[3], day: prop[4], entrance: prop[6] }
     post_changes('/entrances.js',data,$(e.target))
 
+  #
+  # respond to click in .present TD's
+  #
   $('.present').on 'click', (e) ->
-    update_entrances = true
-    $('.alert').show()
-    $('button.save_it').show()
-    $('#status_of_employees').html('husk at trykke GEM - når du er færdig med at rette!')
     prop = $(e.target).closest('tr').prop('id').split("_")
     if prop[prop.length-1]!="0"
+      update_entrances = true
+      $('.alert').show()
+      $('button.save_it').show()
+      $('#status_of_employees').html('husk at trykke GEM - når du er færdig med at rette!')
       $(this).addClass('deleted')
-    if $(this).text()!=""
-      $(this).text('')
+      if $(this).text()!=""
+        $(this).text('')
+    else
+      accept_entrance(this,e.target,prop)
 
+  #
+  # respond to click in .sick, .absent, .unaccounted, .holiday, .free TD's
+  #
   for selector in [ '.sick', '.absent', '.unaccounted', '.holiday', '.free']
     do(selector) ->
       $(selector).on 'click', (e) ->

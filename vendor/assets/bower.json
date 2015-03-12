@@ -1,9 +1,0 @@
-{
-  "name": "dsl-generated dependencies",
-  "dependencies": {
-    "jquery": "2.1.1",
-    "jquery-ujs": "1.0.1",
-    "sweetalert": "0.2.0",
-    "bootstrap-material-design": "0.2.2"
-  }
-}
